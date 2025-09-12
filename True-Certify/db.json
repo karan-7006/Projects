@@ -1,0 +1,46 @@
+{
+    "user": [
+        {
+            "id": 1,
+            "type": "company",
+            "name": "mystudia",
+            "email": "mystudia@gmail.com",
+            "password": "12345"
+        },
+        {
+            "id": 2,
+            "type": "company",
+            "name": "IBM skillsbuilt",
+            "email": "IBM@gmail.com",
+            "password": "12345"
+        },
+        {
+            "id": 3,
+            "type": "company",
+            "name": "infosys",
+            "email": "infosys@gmail.com",
+            "password": "12345"
+        },
+        {
+            "id": 4,
+            "type": "university",
+            "name": "Apollo Institute",
+            "email": "apollo@gmail.com",
+            "password": "12345"
+        },
+        {
+            "id": 5,
+            "type": "university",
+            "name": "Saal University",
+            "email": "saal@gmail.com",
+            "password": "12345"
+        },
+        {
+            "id": 1,
+            "type": "university",
+            "name": "Silveroak University",
+            "email": "silveroak@gmail.com",
+            "password": "12345"
+        }
+    ]
+}
