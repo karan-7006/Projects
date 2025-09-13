@@ -88,6 +88,20 @@ export default function Home() {
 
           {/* Right Side */}
           <div className="d-flex align-items-center">
+            {localStorage.getItem("userRole") === "university" && (
+              <NavLink
+                className="nav-item nav-link fw-semibold me-3"
+                to="/GovApproval"
+                style={{
+                  cursor: "pointer",
+                  color: "#9BEB46",
+                  textShadow:
+                    "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                }}
+              >
+                Gov-Approval
+              </NavLink>
+            )}
             {localStorage.getItem("userId") && (
               <NavLink
                 className="nav-item nav-link fw-semibold me-3"

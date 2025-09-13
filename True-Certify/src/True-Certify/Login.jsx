@@ -58,8 +58,17 @@ export default function Login() {
         return;
       }
 
+      // ✅ Save user details in localStorage
       localStorage.setItem("userId", user.id);
       localStorage.setItem("username", user.name);
+
+      // 🔑 Save role (make sure your DB returns user.role as 'university' or 'company')
+      if (user.role === "university") {
+        localStorage.setItem("userRole", "university");
+      } else {
+        localStorage.setItem("userRole", "company");
+      }
+
       toast.success("Login successful!");
       navigate("/");
     } catch (error) {
@@ -156,7 +165,7 @@ export default function Login() {
               color: "#121212",
               borderRadius: "50px",
               boxShadow: "0 0 15px rgba(155, 235, 70, 0.6)",
-              transition: "all 0.3s ease-in-out", // smooth animations
+              transition: "all 0.3s ease-in-out",
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.transform = "scale(1.05)";
@@ -177,7 +186,6 @@ export default function Login() {
           >
             Login
           </button>
-
         </form>
 
         {/* Forgot password */}

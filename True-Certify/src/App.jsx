@@ -4,6 +4,7 @@ import Home from "./True-Certify/Home"
 import Login from "./True-Certify/Login.jsx"
 import Registration from "./True-Certify/Registration.jsx"
 import UserEdit from "./True-Certify/UserEdit.jsx"
+import GovApproval from "./True-Certify/GovApproval.jsx"
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
       <Route path="/login" element={<Login/>} />
       <Route path="/registration" element={<Registration/>} />
       <Route path="/useredit" element={<UserEdit />} />
+      <Route path="/Gov" element={<GovApproval />} />
+      
       </Routes>
 
     </div>
