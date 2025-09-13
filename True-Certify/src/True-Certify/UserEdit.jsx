@@ -1,47 +1,65 @@
-import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
-export default function Registration() {
+function UserEdit() {
     const redirect = useNavigate();
 
-    const [form, setForm] = useState({
+    const [user, setUser] = useState({
         id: "",
         name: "",
         email: "",
         password: "",
         type: "",
-        status: "",
+        status: ""
     });
 
     const [showPassword, setShowPassword] = useState(false);
 
+    useEffect(() => {
+        getData();
+    }, []);
+
+    const getData = async () => {
+        try {
+            const res = await axios.get(
+                `http://localhost:3000/user/${localStorage.getItem("userId")}`
+            );
+            setUser(res.data);
+        } catch (err) {
+            console.error("Error fetching user:", err);
+            toast.error("Failed to load profile data");
+        }
+    };
+
     const getChange = (e) => {
-        setForm({
-            ...form,
-            id: new Date().getTime().toString(),
-            status: "unblock",
-            [e.target.name]: e.target.value,
+        setUser({
+            ...user,
+            [e.target.name]: e.target.value
         });
     };
 
-    const submit = async (e) => {
+    const updateData = async (e) => {
         e.preventDefault();
 
-        if (!form.email.trim() || !form.password.trim() || !form.name.trim() || !form.type) {
-            toast.error("Please Fill Required Details");
-            return false;
-        }
-
         try {
-            const res = await axios.post("http://localhost:3000/user", form);
-            console.log(res.data);
-            toast.success("Registration Successful");
-            redirect("/Login");
-        } catch (err) {
-            console.error(err);
-            toast.error("Something went wrong, try again!");
+            if (!user.email.trim() || !user.password.trim() || !user.name.trim()) {
+                toast.error("Please fill all required details");
+                return false;
+            }
+
+            const res = await axios.patch(
+                `http://localhost:3000/user/${user.id}`,
+                user
+            );
+
+            localStorage.setItem("username", res.data.name);
+            toast.success("Profile Updated");
+            redirect("/");
+        } catch (error) {
+            console.error("Update failed:", error);
+            toast.error("Failed to update profile");
         }
     };
 
@@ -51,7 +69,7 @@ export default function Registration() {
             style={{
                 backgroundImage: "url('https://images.pexels.com/photos/4862865/pexels-photo-4862865.jpeg')",
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: "center"
             }}
         >
             <div
@@ -63,7 +81,7 @@ export default function Registration() {
                     background: "rgba(18, 18, 18, 0.95)",
                     border: "3px solid #9BEB46",
                     boxShadow: "0 0 25px rgba(155, 235, 70, 0.6)",
-                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease"
                 }}
             >
                 <h2
@@ -71,13 +89,13 @@ export default function Registration() {
                     style={{
                         color: "#9BEB46",
                         fontFamily: "Papyrus, fantasy",
-                        textShadow: "0 0 12px rgba(155, 235, 70, 0.8)",
+                        textShadow: "0 0 12px rgba(155, 235, 70, 0.8)"
                     }}
                 >
-                    <u>Registration Page</u>
+                    <u>Edit Your Profile</u>
                 </h2>
 
-                <form onSubmit={submit}>
+                <form onSubmit={updateData}>
                     {/* Type Dropdown */}
                     <div className="mb-3">
                         <label htmlFor="type" className="form-label fw-semibold text-white">
@@ -86,7 +104,7 @@ export default function Registration() {
                         <select
                             id="type"
                             name="type"
-                            value={form.type}
+                            value={user.type}
                             onChange={getChange}
                             className="form-select"
                             required
@@ -106,7 +124,7 @@ export default function Registration() {
                             type="text"
                             id="name"
                             name="name"
-                            value={form.name}
+                            value={user.name}
                             onChange={getChange}
                             className="form-control"
                             placeholder="Enter your name"
@@ -123,7 +141,7 @@ export default function Registration() {
                             type="email"
                             id="email"
                             name="email"
-                            value={form.email}
+                            value={user.email}
                             onChange={getChange}
                             className="form-control"
                             placeholder="Enter your email"
@@ -133,7 +151,10 @@ export default function Registration() {
 
                     {/* Password with Show/Hide */}
                     <div className="mb-4">
-                        <label htmlFor="password" className="form-label fw-semibold text-white">
+                        <label
+                            htmlFor="password"
+                            className="form-label fw-semibold text-white"
+                        >
                             Password
                         </label>
                         <div className="input-group">
@@ -141,10 +162,10 @@ export default function Registration() {
                                 type={showPassword ? "text" : "password"}
                                 id="password"
                                 name="password"
-                                value={form.password}
+                                value={user.password}
                                 onChange={getChange}
                                 className="form-control"
-                                placeholder="Create a password"
+                                placeholder="Enter your password"
                                 required
                             />
                             <button
@@ -185,24 +206,13 @@ export default function Registration() {
                             e.currentTarget.style.transform = "scale(1.05)";
                         }}
                     >
-                        Register
+                        Update Profile
                     </button>
 
                 </form>
-
-                <div className="text-center mt-3">
-                    <p className="text-light">
-                        Already have an account?{" "}
-                        <NavLink
-                            to="/Login"
-                            className="text-decoration-none"
-                            style={{ color: "#9BEB46" }}
-                        >
-                            Login
-                        </NavLink>
-                    </p>
-                </div>
             </div>
         </div>
     );
 }
+
+export default UserEdit;

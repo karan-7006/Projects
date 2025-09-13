@@ -1,43 +1,56 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
+
+  // Redirect if user is not logged in
+  useEffect(() => {
+    if (!localStorage.getItem("userId")) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // Logout function
+  const logout = () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("username");
+    navigate("/login");
+    toast.success("Logout Successfully");
+  };
 
   // Drag & Drop Handlers
   const handleDrop = useCallback((event) => {
     event.preventDefault();
     const uploadedFile = event.dataTransfer.files[0];
-    if (uploadedFile) {
-      setFile(uploadedFile);
-    }
+    if (uploadedFile) setFile(uploadedFile);
   }, []);
 
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
+  const handleDragOver = (event) => event.preventDefault();
 
   const handleFileChange = (event) => {
     const uploadedFile = event.target.files[0];
-    if (uploadedFile) {
-      setFile(uploadedFile);
-    }
+    if (uploadedFile) setFile(uploadedFile);
   };
 
   return (
     <div>
-
       {/* Navbar */}
       <nav
         className="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top"
         style={{
           backgroundColor: "#121212",
           borderBottom: "2px solid #9BEB46",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.6)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.6)",
         }}
       >
-        <div className="container">
-          {/* Brand */}
+        <div className="container d-flex justify-content-between align-items-center">
+          {/* Left Side (empty to balance layout) */}
+          <div className="d-none d-lg-flex" style={{ width: "150px" }}></div>
+
           <a
             className="navbar-brand fw-bold fs-3 d-flex align-items-center mx-auto"
             href="#"
@@ -54,7 +67,8 @@ export default function Home() {
             <span
               style={{
                 color: "#9BEB46",
-                textShadow: "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                textShadow:
+                  "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
               }}
             >
               T
@@ -63,7 +77,8 @@ export default function Home() {
             <span
               style={{
                 color: "#9BEB46",
-                textShadow: "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                textShadow:
+                  "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
               }}
             >
               C
@@ -71,74 +86,54 @@ export default function Home() {
             <span style={{ textShadow: "0 0 8px rgba(255,255,255,0.6)" }}>ertify</span>
           </a>
 
-          {/* Toggle button for mobile */}
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+          {/* Right Side */}
+          <div className="d-flex align-items-center">
+            {localStorage.getItem("userId") && (
+              <NavLink
+                className="nav-item nav-link fw-semibold me-3"
+                style={{
+                  cursor: "pointer",
+                  color: "#9BEB46",
+                  textShadow:
+                    "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                }}
+                to="/UserEdit"
+              >
+                Hello- {localStorage.getItem("username")}
+              </NavLink>
+            )}
 
-          {/* Nav Links */}
-          {/* <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul className="navbar-nav me-3">
-              {["Home", "About", "Features", "Verify", "Contact"].map((item, idx) => (
-                <li className="nav-item" key={idx}>
-                  <a
-                    className="nav-link fw-semibold"
-                    href={`#${item.toLowerCase()}`}
-                    style={{
-                      color: "#fff",
-                      textShadow: "0 0 6px rgba(255,255,255,0.4)",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.color = "#9BEB46";
-                      e.target.style.textShadow =
-                        "0 0 10px rgba(155,235,70,0.9), 0 0 25px rgba(155,235,70,0.6)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.color = "#fff";
-                      e.target.style.textShadow = "0 0 6px rgba(255,255,255,0.4)";
-                    }}
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            CTA Button
-            <a
-              href="#verify"
-              className="btn fw-bold px-4 rounded-pill"
-              style={{
-                backgroundColor: "#9BEB46",
-                color: "#121212",
-                boxShadow: "0 0 15px rgba(155,235,70,0.6)",
-                transition: "all 0.3s ease",
-              }}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = "#7ED321";
-                e.target.style.boxShadow = "0 0 20px rgba(126,211,33,0.9)";
-                e.target.style.transform = "translateY(-2px)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = "#9BEB46";
-                e.target.style.boxShadow = "0 0 15px rgba(155,235,70,0.6)";
-                e.target.style.transform = "translateY(0)";
-              }}
-            >
-              🚀 Get Started
-            </a>
-          </div> */}
+            {localStorage.getItem("userId") ? (
+              <NavLink
+                onClick={logout}
+                className="nav-item nav-link fw-semibold"
+                to="/login"
+                style={{
+                  cursor: "pointer",
+                  color: "#9BEB46",
+                  textShadow:
+                    "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                }}
+              >
+                User-Logout
+              </NavLink>
+            ) : (
+              <NavLink
+                to="/Login"
+                className="nav-item nav-link fw-semibold"
+                style={{
+                  color: "#9BEB46",
+                  textShadow:
+                    "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                }}
+              >
+                User-Login
+              </NavLink>
+            )}
+          </div>
         </div>
       </nav>
+
 
 
 
@@ -273,7 +268,9 @@ export default function Home() {
       <section
         className="about-us-section container-fluid py-5 px-5"
         style={{
-          backgroundColor: "#121212",
+          backgroundImage: "url('https://images.pexels.com/photos/4862865/pexels-photo-4862865.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           boxShadow: "0 8px 30px rgba(155, 235, 70, 0.2)",
           borderTop: "2px solid #9BEB46",
         }}
@@ -641,8 +638,9 @@ export default function Home() {
       < section
         className="py-5"
         style={{
-          backgroundColor: "#121212",
-          position: "relative",
+          backgroundImage: "url('https://images.pexels.com/photos/4862865/pexels-photo-4862865.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center", position: "relative",
           overflow: "hidden",
           borderTop: "2px solid #9BEB46",
 
@@ -664,14 +662,14 @@ export default function Home() {
                 style={{
                   borderRadius: "20px",
                   background: "#121212",
-                  border: "2px solid #9BEB46", 
+                  border: "2px solid #9BEB46",
                   boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.transform = "translateY(-10px)";
-                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(0,0,0,0.25), 0 0 15px #9BEB46"; 
-                  e.currentTarget.style.borderColor = "#7ED321"; 
+                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(0,0,0,0.25), 0 0 15px #9BEB46";
+                  e.currentTarget.style.borderColor = "#7ED321";
                 }}
                 onMouseOut={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
@@ -689,7 +687,7 @@ export default function Home() {
                 >
                   📤
                 </div>
-                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy" , color: "#9BEB46" }}>1. Upload Certificate</h5>
+                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy", color: "#9BEB46" }}>1. Upload Certificate</h5>
                 <p className="text-light fw-bold" style={{ fontFamily: "Georgia" }}>
                   Upload your certificate (PDF or image) by dragging & dropping or selecting a file.
                 </p>
@@ -704,7 +702,7 @@ export default function Home() {
                 style={{
                   borderRadius: "20px",
                   background: "#121212",
-                  border: "2px solid #9BEB46", 
+                  border: "2px solid #9BEB46",
                   boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
                 }}
@@ -729,7 +727,7 @@ export default function Home() {
                 >
                   🔒
                 </div>
-                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy" , color: "#9BEB46" }}>2. Generate Hash</h5>
+                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy", color: "#9BEB46" }}>2. Generate Hash</h5>
                 <p className="text-light fw-bold" style={{ fontFamily: "Georgia" }}>
                   The system generates a unique <strong>SHA-256 hash</strong> and stores it securely on the blockchain.
                 </p>
@@ -744,7 +742,7 @@ export default function Home() {
                 style={{
                   borderRadius: "20px",
                   background: "#121212",
-                  border: "2px solid #9BEB46",  
+                  border: "2px solid #9BEB46",
                   boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
                   transition: "transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease"
                 }}
@@ -769,7 +767,7 @@ export default function Home() {
                 >
                   🔍
                 </div>
-                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy" , color: "#9BEB46" }}>3. Verify</h5>
+                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy", color: "#9BEB46" }}>3. Verify</h5>
                 <p className="text-light fw-bold" style={{ fontFamily: "Georgia" }}>
                   The system cross-checks your uploaded certificate’s hash with blockchain records.
                 </p>
@@ -809,7 +807,7 @@ export default function Home() {
                 >
                   ✅
                 </div>
-                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy" ,color: "#9BEB46" }}>4. Get Results</h5>
+                <h5 className="fw-bold mb-3" style={{ fontFamily: "Papyrus, fantasy", color: "#9BEB46" }}>4. Get Results</h5>
                 <p className="text-light fw-bold" style={{ fontFamily: "Georgia" }}>
                   Instantly know if the certificate is <strong>Valid</strong>, <strong>Tampered</strong>, or <strong>Not Found</strong>.
                 </p>
@@ -826,8 +824,9 @@ export default function Home() {
       <section
         className="py-5"
         style={{
-          backgroundColor: "#121212",
-          position: "relative",
+          backgroundImage: "url('https://images.pexels.com/photos/4862865/pexels-photo-4862865.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center", position: "relative",
           overflow: "hidden",
           borderTop: "2px solid #9BEB46",
 
@@ -1002,7 +1001,7 @@ export default function Home() {
                 </h5>
                 <p
                   className="text-light fw-bold"
-                  style={{ fontFamily: "Georgia"}}
+                  style={{ fontFamily: "Georgia" }}
                 >
                   On upload/scan, the certificate’s hash is{" "}
                   <strong>cross-checked</strong> with blockchain records. <br /> ✅
@@ -1037,7 +1036,9 @@ export default function Home() {
       <footer
         className="pt-5 text-white"
         style={{
-          backgroundColor: "#121212",
+          backgroundImage: "url('https://images.pexels.com/photos/4862865/pexels-photo-4862865.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           borderTop: "2px solid #9BEB46",
           boxShadow: "0 -6px 25px rgba(155, 235, 70, 0.3)",
           fontFamily: "Courier, monospace",
@@ -1070,27 +1071,27 @@ export default function Home() {
               </h5>
               <ul className="list-unstyled">
                 <li>
-                  <a href="#about" className="text-white text-decoration-none" style={{fontFamily: "Georgia"}}>
+                  <a href="#about" className="text-white text-decoration-none" style={{ fontFamily: "Georgia" }}>
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#features" className="text-white text-decoration-none" style={{fontFamily: "Georgia"}}>
+                  <a href="#features" className="text-white text-decoration-none" style={{ fontFamily: "Georgia" }}>
                     Features
                   </a>
                 </li>
                 <li>
-                  <a href="#verify" className="text-white text-decoration-none" style={{fontFamily: "Georgia"}}>
+                  <a href="#verify" className="text-white text-decoration-none" style={{ fontFamily: "Georgia" }}>
                     Verify
                   </a>
                 </li>
                 <li>
-                  <a href="#faq" className="text-white text-decoration-none" style={{fontFamily: "Georgia"}}>
+                  <a href="#faq" className="text-white text-decoration-none" style={{ fontFamily: "Georgia" }}>
                     FAQ
                   </a>
                 </li>
                 <li>
-                  <a href="#contact" className="text-white text-decoration-none" style={{fontFamily: "Georgia"}}>
+                  <a href="#contact" className="text-white text-decoration-none" style={{ fontFamily: "Georgia" }}>
                     Contact
                   </a>
                 </li>
@@ -1105,9 +1106,9 @@ export default function Home() {
               >
                 Contact Us
               </h5>
-              <p className="mb-1" style={{fontFamily: "Georgia"}}>📧 trulycertify@gmail.com</p>
-              <p className="mb-1" style={{fontFamily: "Georgia"}}>📞 +91 234 567 890</p>
-              <p style={{fontFamily: "Georgia"}}>📍 SNME Campus, Anasan Gam, Ahmedabad City, Gujarat</p>
+              <p className="mb-1" style={{ fontFamily: "Georgia" }}>📧 trulycertify@gmail.com</p>
+              <p className="mb-1" style={{ fontFamily: "Georgia" }}>📞 +91 234 567 890</p>
+              <p style={{ fontFamily: "Georgia" }}>📍 SNME Campus, Anasan Gam, Ahmedabad City, Gujarat</p>
 
               {/* Social Icons */}
               <div className="d-flex gap-3 fs-4 mt-3">
