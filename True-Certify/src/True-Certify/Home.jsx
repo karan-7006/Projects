@@ -7,17 +7,48 @@ export default function Home() {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
 
-  // Redirect if user is not logged in
+  // keep role in state so UI reacts when it changes
+  const [userRole, setUserRole] = useState(() => {
+    // check multiple possible keys and normalize to lowercase
+    const r =
+      localStorage.getItem("userRole") ||
+      localStorage.getItem("usertype") ||
+      localStorage.getItem("type") ||
+      "";
+    return r ? r.toString().toLowerCase() : "";
+  });
+
   useEffect(() => {
+    // Redirect if user is not logged in
     if (!localStorage.getItem("userId")) {
       navigate("/login");
     }
   }, [navigate]);
 
-  // Logout function
+  // keep state in sync if localStorage changes in another tab
+  useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === "userRole" || e.key === "usertype" || e.key === "type") {
+        const r =
+          localStorage.getItem("userRole") ||
+          localStorage.getItem("usertype") ||
+          localStorage.getItem("type") ||
+          "";
+        setUserRole(r ? r.toString().toLowerCase() : "");
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // Logout - remove role too
   const logout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("username");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("usertype");
+    localStorage.removeItem("type");
+    setUserRole("");
     navigate("/login");
     toast.success("Logout Successfully");
   };
@@ -48,7 +79,6 @@ export default function Home() {
         }}
       >
         <div className="container d-flex justify-content-between align-items-center">
-          {/* Left Side (empty to balance layout) */}
           <div className="d-none d-lg-flex" style={{ width: "150px" }}></div>
 
           <a
@@ -64,31 +94,16 @@ export default function Home() {
               className="me-2 d-inline-block align-text-top"
               style={{ filter: "drop-shadow(0px 0px 6px rgba(155,235,70,0.8))" }}
             />
-            <span
-              style={{
-                color: "#9BEB46",
-                textShadow:
-                  "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
-              }}
-            >
-              T
-            </span>
-            <span style={{ textShadow: "0 0 8px rgba(255,255,255,0.6)" }}>rue</span>
-            <span
-              style={{
-                color: "#9BEB46",
-                textShadow:
-                  "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
-              }}
-            >
-              C
-            </span>
-            <span style={{ textShadow: "0 0 8px rgba(255,255,255,0.6)" }}>ertify</span>
+            <span style={{ color: "#9BEB46" }}>T</span>
+            <span>rue</span>
+            <span style={{ color: "#9BEB46" }}>C</span>
+            <span>ertify</span>
           </a>
 
           {/* Right Side */}
           <div className="d-flex align-items-center">
-            {localStorage.getItem("userRole") === "university" && (
+            {/* Gov-Approval: show ONLY for universities */}
+            {(localStorage.getItem("userRole") || "").toLowerCase() === "university" && (
               <NavLink
                 className="nav-item nav-link fw-semibold me-3"
                 to="/GovApproval"
@@ -102,16 +117,18 @@ export default function Home() {
                 Gov-Approval
               </NavLink>
             )}
+
+            {/* Hello username */}
             {localStorage.getItem("userId") && (
               <NavLink
                 className="nav-item nav-link fw-semibold me-3"
+                to="/UserEdit"
                 style={{
                   cursor: "pointer",
                   color: "#9BEB46",
                   textShadow:
                     "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
                 }}
-                to="/UserEdit"
               >
                 Hello- {localStorage.getItem("username")}
               </NavLink>

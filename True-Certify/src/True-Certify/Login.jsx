@@ -61,12 +61,13 @@ export default function Login() {
       // ✅ Save user details in localStorage
       localStorage.setItem("userId", user.id);
       localStorage.setItem("username", user.name);
+      localStorage.setItem("userRole", user.type.toLowerCase());
 
-      // 🔑 Save role (make sure your DB returns user.role as 'university' or 'company')
-      if (user.role === "university") {
-        localStorage.setItem("userRole", "university");
+
+      if (user.type) {
+        localStorage.setItem("userRole", user.type.toLowerCase());
       } else {
-        localStorage.setItem("userRole", "company");
+        localStorage.removeItem("userRole");
       }
 
       toast.success("Login successful!");
