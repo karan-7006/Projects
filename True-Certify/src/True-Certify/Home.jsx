@@ -104,18 +104,33 @@ export default function Home() {
           <div className="d-flex align-items-center">
             {/* Gov-Approval: show ONLY for universities */}
             {(localStorage.getItem("userRole") || "").toLowerCase() === "university" && (
-              <NavLink
-                className="nav-item nav-link fw-semibold me-3"
-                to="/GovApproval"
-                style={{
-                  cursor: "pointer",
-                  color: "#9BEB46",
-                  textShadow:
-                    "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
-                }}
-              >
-                Gov-Approval
-              </NavLink>
+              <>
+                <NavLink
+                  className="nav-item nav-link fw-semibold me-3"
+                  to="/GovApproval"
+                  style={{
+                    cursor: "pointer",
+                    color: "#9BEB46",
+                    textShadow:
+                      "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                  }}
+                >
+                  Gov-Approval
+                </NavLink>
+
+                <NavLink
+                  className="nav-item nav-link fw-semibold me-3"
+                  to="/Upload"
+                  style={{
+                    cursor: "pointer",
+                    color: "#9BEB46",
+                    textShadow:
+                      "0 0 10px rgba(155,235,70,0.9), 0 0 20px rgba(155,235,70,0.6)",
+                  }}
+                >
+                  Upload
+                </NavLink>
+              </>
             )}
 
             {/* Hello username */}

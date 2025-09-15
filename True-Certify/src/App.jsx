@@ -5,6 +5,7 @@ import Login from "./True-Certify/Login.jsx"
 import Registration from "./True-Certify/Registration.jsx"
 import UserEdit from "./True-Certify/UserEdit.jsx"
 import GovApproval from "./True-Certify/GovApproval.jsx"
+import OCARReader from "./True-Certify/OCARReader.jsx"
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/registration" element={<Registration/>} />
       <Route path="/useredit" element={<UserEdit />} />
       <Route path="/GovApproval" element={<GovApproval />} />
+      <Route path="/Upload" element={<OCARReader />} />
       
       </Routes>
 
