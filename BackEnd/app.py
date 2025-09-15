@@ -267,7 +267,8 @@ def extract_certificate_data(img_path: str):
             r"(?:Name|Candidate|Student)\s*[:\-]?\s*([A-Z][A-Za-z.\- ]{2,60})(?=\s|$)",
             r"This is to certify that\s+([A-Z][A-Za-z.\- ]{2,60})(?=\s+(?:has|who|son|daughter|of|$))",
             r"(?:This is to\s+)?certify that\s+(?:Mr|Ms|Miss|Mrs)\.?\s+([A-Z][A-Za-z.\- ]{2,60})(?=\s+(?:has|who|son|daughter|of|$))",
-            r"(?:Mr|Ms|Miss|Mrs)\.?\s+([A-Z][A-Za-z.\- ]{2,60})(?=\s|$)"
+            r"(?:Mr|Ms|Miss|Mrs)\.?\s+([A-Z][A-Za-z.\- ]{2,60})(?=\s|$)",
+            r"(mr+[A-Za-z &])"
         ]
 
         for pattern in name_patterns:
@@ -312,51 +313,29 @@ def extract_certificate_data(img_path: str):
                 break
 
         # ------------------ Extract University ------------------
-        # university_patterns = [
-        #     r"(University of [A-Za-z &]+)",
-        #     r"([A-Za-z &]+ University)",
-        #     r"(Institute of [A-Za-z &]+)",
-        #     r"([A-Za-z &]+ Institute)"
-        # ]
-        # for pattern in university_patterns:
-        #     um = re.search(pattern, text_for_search, re.IGNORECASE)
-        #     if um:
-        #         uni_raw = um.group(0).strip()
-        #         if FUZZY_AVAILABLE:
-        #             best = process.extractOne(uni_raw, UNIVERSITIES)
-        #             university = best[0] if best and best[1] > 60 else uni_raw
-        #         else:
-        #             university = uni_raw
-        #         break
-
-
-        # ------------------ Extract University ------------------
         university_patterns = [
-            r"(University of [A-Za-z &]+)",
+            r"(University of + [A-Za-z &])",
+            r"([A-Za-z &]+Universityoftechnology)",
+            r"([A-Za-z &]+ Universitytechnology)",
             r"([A-Za-z &]+ University)",
+            r"([A-Za-z &]+University+[A-Za-z &])",
+            r"([A-Za-z &]+ University +[A-Za-z &])",
+            r"([A-Za-z &]+ technology +[A-Za-z &])",
+            r"([A-Za-z &]+technology+[A-Za-z &])",
             r"(Institute of [A-Za-z &]+)",
+            r"([A-Za-z &]+ Institute +[A-Za-z &])",
+            r"([A-Za-z &]+Institute+[A-Za-z &])",
             r"([A-Za-z &]+ Institute)"
         ]
-
         for pattern in university_patterns:
             um = re.search(pattern, text_for_search, re.IGNORECASE)
             if um:
                 uni_raw = um.group(0).strip()
-
-                # Cleanup university string
-                uni_clean = re.sub(r"\s{2,}", " ", uni_raw)         # normalize spaces
-                uni_clean = re.sub(r"[^A-Za-z &]", "", uni_clean)   # remove stray characters
-                uni_clean = uni_clean.strip().title()               # proper case (e.g. Delhi University)
-
-                # Try fuzzy match against known list
-                if FUZZY_AVAILABLE and UNIVERSITIES:
-                    best = process.extractOne(uni_clean, UNIVERSITIES)
-                    if best and best[1] > 70:  # confidence threshold
-                        university = best[0]
-                    else:
-                        university = uni_clean
+                if FUZZY_AVAILABLE:
+                    best = process.extractOne(uni_raw, UNIVERSITIES)
+                    university = best[0] if best and best[1] > 20 else uni_raw
                 else:
-                    university = uni_clean
+                    university = uni_raw
                 break
 
         # Final cleanup for all fields
